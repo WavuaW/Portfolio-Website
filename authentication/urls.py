@@ -1,7 +1,7 @@
 from django.urls import path
-from authentication.views import User
-# authentication urls
+from authentication import views
 
 urlpatterns = [
-    path('', User.as_view(), name='user'),
+    path('shipments/', views.ShipmentListView.as_view()),
+    path('shipments/<int:pk>/', views.ShipmentDetailView.as_view()),
 ]
