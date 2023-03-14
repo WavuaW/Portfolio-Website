@@ -1,3 +1,84 @@
 from django.db import models
+from user.models import User
 
-# Create your models here.
+
+"""
+def generate_tracking_no(size=12, chars='012345678912'):
+       return ''.join(random.choice(chars) for _ in range(size))
+"""
+       
+
+
+class Shipment(models.Model):   
+    shipment_name = models.CharField(max_length=100)
+    shipping_type = models.CharField(max_length=100)
+    container_no = models.IntegerField()
+    length = models.IntegerField()
+    width = models.IntegerField()
+    heigh = models.IntegerField()
+    weight = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    goodsType = models.CharField(max_length=100, blank=True)
+    additional_info	= models.CharField(max_length=100, blank=True)
+    pickup_timestamp = models.DateTimeField(auto_now=True,null=True)
+    arrival_timestamp = models.DateTimeField(auto_now=True,null=True)
+   
+
+
+    class Meta:
+        ordering = ["shipment_name"]
+
+
+    def __str__(self) -> str:
+        return self.shipment_name
+
+
+class ShippingTo(models.Model):
+    receiver_name = models.CharField(max_length=100)
+    receiver_company = models.CharField(max_length=100)
+    receiver_country = models.CharField(max_length=100)
+    receiver_address =  models.CharField(max_length=100)
+    receiver_address_2 =  models.CharField(max_length=100)
+    receiver_address_3 =  models.CharField(max_length=100)
+    postal_code = models.BigIntegerField(null = True)
+    state =  models.CharField(max_length=100, blank=True)
+    city =  models.CharField(max_length=100, blank=True)
+    email =  models.CharField(max_length=100)
+    phone_number = models.BigIntegerField(null = True)
+    country_code = models.BigIntegerField(null = True)
+    taxt_no = models.IntegerField(null=True)
+    shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE)
+    
+    class Meta:
+        ordering = ["receiver_name"]
+
+
+    def __str__(self) -> str:
+        return self.receiver_name
+    
+    
+
+class ShippingFrom(models.Model):
+    sender_name = models.CharField(max_length=100)
+    sender_company = models.CharField(max_length=100)
+    sender_country = models.CharField(max_length=100)
+    sender_address =  models.CharField(max_length=100)
+    sender_address_2 =  models.CharField(max_length=100)
+    sender_address_3 =  models.CharField(max_length=100)
+    postal_code = models.BigIntegerField(null= True)
+    state =  models.CharField(max_length=100, blank=True)
+    city =  models.CharField(max_length=100, blank=True)
+    email =  models.CharField(max_length=100)
+    phone_number = models.BigIntegerField(null = True)
+    country_code = models.BigIntegerField(null= True)
+    taxt_no = models.BigIntegerField(null= True)
+    vat_no = models.IntegerField(null= True)
+    shippingto = models.ForeignKey(ShippingTo, on_delete=models.CASCADE)
+    
+
+    class Meta:
+        ordering = ["sender_name"]
+
+
+    def __str__(self) -> str:
+        return self.sender_name
