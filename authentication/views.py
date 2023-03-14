@@ -4,8 +4,9 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-#from rest_framework.authentication import TokenAuthentication
-#from rest_framework.permissions import IsAuthenticated
+from authentication.permissions import ShipmentCustomerOrReadOnly
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 
 from .models import Shipment, ShippingTo, ShippingFrom
@@ -18,8 +19,8 @@ class ShipmentListView(APIView):
     """
     List all shipment, or create a new shipment
     """
-    #authentication_classes=[TokenAuthentication]
-    #permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated,ShipmentCustomerOrReadOnly]
 
   
     def get(self, request, format=None):
@@ -41,8 +42,8 @@ class ShipmentDetailView(APIView):
 	"""
 	Retrieve, update or delete a shipment instance
 	"""
-	#authentication_classes=[TokenAuthentication]
-	#permission_classes=[IsAuthenticated]
+	authentication_classes=[TokenAuthentication]
+	permission_classes=[ShipmentCustomerOrReadOnly]
 	
 	def get_object(self, pk):
 		# Returns an object instance that should
@@ -76,8 +77,8 @@ class ShippingToListView(APIView):
     """
     List all shippingto, or create a new shippingto
     """
-    #authentication_classes=[TokenAuthentication]
-    #permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated, ShipmentCustomerOrReadOnly]
 
   
     def get(self, request, format=None):
@@ -99,8 +100,8 @@ class ShippingToDetailView(APIView):
 	"""
 	Retrieve, update or delete a shippingto instance
 	"""
-	#authentication_classes=[TokenAuthentication]
-	#permission_classes=[IsAuthenticated]
+	authentication_classes=[TokenAuthentication]
+	permission_classes=[IsAuthenticated, ShipmentCustomerOrReadOnly]
 	
 	def get_object(self, pk):
 		# Returns an object instance that should
@@ -134,7 +135,7 @@ class ShippingFromListView(APIView):
     List all shippingto, or create a new shippingto
     """
     #authentication_classes=[TokenAuthentication]
-    #permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated, ShipmentCustomerOrReadOnly]
 
   
     def get(self, request, format=None):
@@ -156,8 +157,8 @@ class ShippingFromDetailView(APIView):
 	"""
 	Retrieve, update or delete a shippingto instance
 	"""
-	#authentication_classes=[TokenAuthentication]
-	#permission_classes=[IsAuthenticated]
+	authentication_classes=[TokenAuthentication]
+	permission_classes=[IsAuthenticated, ShipmentCustomerOrReadOnly]
 	
 	def get_object(self, pk):
 		# Returns an object instance that should
