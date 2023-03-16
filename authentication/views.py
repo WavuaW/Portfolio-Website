@@ -25,22 +25,13 @@ class ShipmentListView(GenericAPIView):
 
 
     def get(self, request, format=None):
-        shipments = Shipment.objects.all()
-        for shipment in shipments:
-            if request.user == shipment.user:
-                serializer = ShipmentSerializers(instance=shipments, many=True)
-                return Response(
-                    data={"message": "success", "data": serializer.data},
-                    status=status.HTTP_200_OK,
-                )
-            return Response(
-                data={"message": "authorized access"}, status=status.HTTP_403_FORBIDDEN
-            )
-        else:
-            Response(
-                data={"message": "Dont have a booking, create another"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        shipments = Shipment.objects.filter(user=request.user)
+
+        serializer = ShipmentSerializers(instance=shipments, many=True)
+        return Response(
+            data={"message": "success", "data": serializer.data},
+            status=status.HTTP_200_OK,
+        )
 
     def post(self, request, format=None):
         serializer = ShipmentSerializers(data=request.data)
@@ -68,8 +59,14 @@ class ShipmentDetailView(GenericAPIView):
 
     def get(self, request, pk, format=None):
         shipment = self.get_object(pk)
-        serializer = ShipmentSerializers(shipment)
-        return Response(serializer.data)
+        if request.user == shipment.user:
+            serializer = ShipmentSerializers(instance=shipment)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                data={"message": "It is not created by you"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def put(self, request, pk, format=None):
         shipment = self.get_object(pk)
@@ -101,6 +98,7 @@ class ShippingToListView(APIView):
     def get(self, request, format=None):
         shippingto = ShippingTo.objects.all()
         serializer = ShippingToSerializers(shippingto, many=True)
+        # print(shippingto.shipment)
         return Response(serializer.data)
 
     def post(self, request, format=None):
