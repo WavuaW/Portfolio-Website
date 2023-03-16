@@ -17,7 +17,7 @@ class Shipment(models.Model):
     width = models.IntegerField()
     heigh = models.IntegerField()
     weight = models.IntegerField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shipment')
     goodsType = models.CharField(max_length=100, blank=True)
     additional_info	= models.CharField(max_length=100, blank=True)
     pickup_timestamp = models.DateTimeField(auto_now=True,null=True)
@@ -47,7 +47,7 @@ class ShippingTo(models.Model):
     phone_number = models.BigIntegerField(null = True)
     country_code = models.BigIntegerField(null = True)
     taxt_no = models.IntegerField(null=True)
-    shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE)
+    shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name='shippingto')
     
     class Meta:
         ordering = ["receiver_name"]
@@ -73,7 +73,7 @@ class ShippingFrom(models.Model):
     country_code = models.BigIntegerField(null= True)
     taxt_no = models.BigIntegerField(null= True)
     vat_no = models.IntegerField(null= True)
-    shippingto = models.ForeignKey(ShippingTo, on_delete=models.CASCADE)
+    shippingto = models.ForeignKey(ShippingTo, on_delete=models.CASCADE, related_name='shippingfrom')
     
 
     class Meta:
