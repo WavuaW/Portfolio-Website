@@ -32,7 +32,7 @@ class ShipmentListView(GenericAPIView):
             data={"message": "success", "data": serializer.data},
             status=status.HTTP_200_OK,
         )
-
+        
     def post(self, request, format=None):
         serializer = ShipmentSerializers(data=request.data)
         if serializer.is_valid():
@@ -77,7 +77,7 @@ class ShipmentDetailView(GenericAPIView):
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(
-            data="Cant not updated someone post", status=status.HTTP_400_BAD_REQUEST
+            data="Can not update someone's post", status=status.HTTP_400_BAD_REQUEST
         )
 
     def delete(self, request, pk, format=None):
@@ -85,7 +85,7 @@ class ShipmentDetailView(GenericAPIView):
         if shipment.user == request.user:
             shipment.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(data="Cant delete someone post")
+        return Response(data="Can't delete someone's post")
 
 
 class ShippingToListView(APIView):
@@ -95,11 +95,15 @@ class ShippingToListView(APIView):
 
     permission_classes = [IsAuthenticated, OwnerCustomPermission]
 
+
     def get(self, request, format=None):
-        shippingto = ShippingTo.objects.all()
-        serializer = ShippingToSerializers(shippingto, many=True)
-        # print(shippingto.shipment)
-        return Response(serializer.data)
+        shippingto = ShippingTo.objects.filter(user=request.user)
+
+        serializer = ShippingToSerializers(instance=shippingto, many=True)
+        return Response(
+            data={"message": "success", "data": serializer.data},
+            status=status.HTTP_200_OK,
+        )
 
     def post(self, request, format=None):
         serializer = ShippingToSerializers(data=request.data)
@@ -127,37 +131,53 @@ class ShippingToDetailView(APIView):
 
     def get(self, request, pk, format=None):
         shippingto = self.get_object(pk)
-        serializer = ShippingToSerializers(shippingto)
-        return Response(serializer.data)
+        if request.user == shippingto.user:
+            serializer = ShippingToSerializers(instance=shippingto)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                data={"message": "It is not created by you"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def put(self, request, pk, format=None):
         shippingto = self.get_object(pk)
         serializer = ShippingToSerializers(shippingto, data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if request.user == shippingto.user:
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            data="Can not update someone's post", status=status.HTTP_400_BAD_REQUEST
+        )
 
     def delete(self, request, pk, format=None):
         shippingto = self.get_object(pk)
-        shippingto.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if shippingto.user == request.user:
+            shippingto.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(data="Can't delete someone's post")
 
 
 class ShippingFromListView(APIView):
     """
-    List all shippingto, or create a new shippingto
+    List all shippingfrom, or create a new shippingfrom
     """
 
     permission_classes = [IsAuthenticated, OwnerCustomPermission]
 
     def get(self, request, format=None):
-        shippingfrom = ShippingFrom.objects.all()
-        serializer = ShippingFromSerializers(shippingfrom, many=True)
-        return Response(serializer.data)
+        shippingfrom = ShippingFrom.objects.filter(user=request.user)
+
+        serializer = ShippingFromSerializers(instance=shippingfrom, many=True)
+        return Response(
+            data={"message": "success", "data": serializer.data},
+            status=status.HTTP_200_OK,
+        )
 
     def post(self, request, format=None):
-        serializer = ShippingToSerializers(data=request.data)
+        serializer = ShippingFromSerializers(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -182,18 +202,30 @@ class ShippingFromDetailView(APIView):
 
     def get(self, request, pk, format=None):
         shippingfrom = self.get_object(pk)
-        serializer = ShippingFromSerializers(shippingfrom)
-        return Response(serializer.data)
+        if request.user == shippingfrom.user:
+            serializer = ShippingFromSerializers(instance=shippingfrom)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                data={"message": "It is not created by you"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def put(self, request, pk, format=None):
         shippingfrom = self.get_object(pk)
         serializer = ShippingFromSerializers(shippingfrom, data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if request.user == shippingfrom.user:
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            data="Can not update someone's post", status=status.HTTP_400_BAD_REQUEST
+        )
 
     def delete(self, request, pk, format=None):
         shippingfrom = self.get_object(pk)
-        shippingfrom.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if shippingfrom.user == request.user:
+            shippingfrom.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(data="Can't delete someone's post")

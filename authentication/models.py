@@ -47,6 +47,7 @@ class ShippingTo(models.Model):
     phone_number = models.BigIntegerField(null = True)
     country_code = models.BigIntegerField(null = True)
     taxt_no = models.IntegerField(null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shippingto')
     shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name='shippingto')
     
     class Meta:
@@ -73,6 +74,7 @@ class ShippingFrom(models.Model):
     country_code = models.BigIntegerField(null= True)
     taxt_no = models.BigIntegerField(null= True)
     vat_no = models.IntegerField(null= True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shippingfrom')
     shippingto = models.ForeignKey(ShippingTo, on_delete=models.CASCADE, related_name='shippingfrom')
     
 
