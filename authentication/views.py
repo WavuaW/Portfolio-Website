@@ -7,16 +7,19 @@ from rest_framework import status
 from authentication.permissions import OwnerCustomPermission
 from rest_framework.permissions import IsAuthenticated
 
-
-from .models import Shipment, ShippingTo, ShippingFrom
+from .models import (Shipment, 
+                    ShippingTo, 
+                    ShippingFrom,
+                    Country,State,City)
 from .serializers import (
     ShipmentSerializers,
     ShippingToSerializers,
     ShippingFromSerializers,
+    CountrySerializer,CitySerializer,StateSerializer
 )
 
 
-class ShipmentListView(GenericAPIView):
+class ShipmentListView(APIView):
     """
     List all shipment, or create a new shipment
     """
@@ -229,3 +232,38 @@ class ShippingFromDetailView(APIView):
             shippingfrom.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(data="Can't delete someone's post")
+    
+
+class CountryListView(GenericAPIView):
+    """
+    List all country
+    """
+    def get(self, request, format=None):
+        state = Country.objects.all()
+
+        serializer = CountrySerializer(state, many=True)
+        return Response(
+            data={"message": "success", "data": serializer.data},
+            status=status.HTTP_200_OK,
+        )
+    
+class StateView(GenericAPIView):
+    def get(self, request):
+        """
+        Get single state that is in a country
+        """
+        country_id = self.request.query_params.get('country')
+        items = State.objects.filter(country=country_id)
+        serializer = StateSerializer(items, many=True)
+        return Response({"states": serializer.data}, status=status.HTTP_200_OK)
+
+
+class CityView(GenericAPIView):
+    def get(self, request):
+        """
+        Get single city that is in a state
+        """
+        state_id = self.request.query_params.get('state')
+        items = City.objects.filter(country=state_id)
+        serializer = CitySerializer(items, many=True)
+        return Response({"cities": serializer.data}, status=status.HTTP_200_OK)      
