@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'authentication',
     'rest_framework',
     'user',
+    'tracking',
     'rest_framework_simplejwt',
 ]
 
@@ -111,6 +112,12 @@ DATABASES = {
     }
 }
 
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'http://localhost:8080',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

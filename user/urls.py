@@ -1,6 +1,8 @@
 from django.urls import path
 from user.views import RegisterView, LoginView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from rest_framework_simplejwt.views import (TokenObtainPairView, 
+                                            TokenRefreshView, 
+                                            TokenVerifyView)
 # route for user account creation
 
 urlpatterns = [

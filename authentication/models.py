@@ -2,13 +2,6 @@ from django.db import models
 from user.models import User
 
 
-"""
-def generate_tracking_no(size=12, chars='012345678912'):
-       return ''.join(random.choice(chars) for _ in range(size))
-"""
-       
-
-
 class Shipment(models.Model):   
     shipment_name = models.CharField(max_length=100)
     shipping_type = models.CharField(max_length=100)
